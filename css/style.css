@@ -1,0 +1,167 @@
+body.painel{
+	fonte:14px Georgia, "Times New Roman", Times, serif;
+	color: #333;
+	background: #f8f8f8;
+}
+a:link, a:active, a:visited{
+	text-decoration: none;
+	color: #09f;
+}
+a:hover{
+	text-decoration: underline;
+}
+#wrapper{
+	width: 980px;
+	margin: 0 auto;
+	background: #fff;
+}
+#header{
+	height: 100px;
+	border-bottom: 2px solid #999;
+	padding: 10px;
+}
+#header h1{
+	font-size: 30px;
+	margin-top: 30px;
+}
+#wrap-content{
+	display: table;
+	height: auto;
+	padding: 10px;
+}
+#content{
+	float: right;
+	width: 795px;
+	padding-left: 15px;
+}
+#content h2{
+	font-size: 20px;
+	border-bottom: 1px solid #999;
+	margin-bottom: 10px;
+}
+#sidebar{
+	float: left;
+	width: 150px;
+}
+#sidebar ul li{
+	padding: 2% 5%;
+	width: 90%;
+	background: #f8f8f8;
+	margin-bottom: 1px;
+	font-size: 16px;
+	display: block;
+}
+#accordion ul{
+	display: none;
+	margin: 5px 10 px;
+}
+#accordion ul li{
+	padding: 2%;
+	width: 96%;
+	background: #fff;
+	margin-bottom: 2px;
+	display: block;
+	font-size: 14px;
+}
+#footer{
+	height: 20px;
+	border-top: 2px solid #999;
+	padding: 20px 10px;
+	text-align: center;
+}
+#loginform{
+	width: 480px;
+	margin: 100px auto;
+}
+
+fieldset{
+	border: 1px solid #f4f4f4;
+	padding: 20px 10px
+}
+
+legend{
+	font-size: 16px;
+	padding: 0 10px;
+}
+form li{
+	padding: 5px;
+	margin-bottom: 1px;
+}
+form li.center{
+	text-align: center;
+}
+form li.left{
+	text-align: left;
+}
+form li.right{
+	text-align: right;
+}
+form input[type=submit],form input[type=button]{
+	cursor: pointer;
+	padding: 5px 25px;
+	border: 1px solid $ccc;
+	margin: 0 5px;
+}
+form input[type=submit]:hover,form input[type=button]:hover{
+	background: #f8f8f8;
+	border: 1px solid $666;
+}
+form label{
+	float: left;
+	width: 100px;
+	text-align: right;
+	margin-right: 5px;
+}
+form label.error{
+	float: none;
+	display: block;
+	color: #f00;
+	width: auto;
+	text-align: left;
+	padding-left: 105px;
+}
+form input[type=text], form input[type=password], form textarea{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+form input[type=text]:focus, form input[type=password]:focus, form textarea:focus{
+	background: #f8f8f8;
+	border: 1px saolid #666;
+}
+.radius5{
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+	-ms-border-radius: 5px;
+}
+.erro, .sucesso, .alerta, .pergunta{
+	width: 96%;
+	padding: 2%;
+	margin: 10px 0;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+	-ms-border-radius: 5px;
+}
+.sucesso{
+	background: #eff4d4;
+	border: 1px solid #8fad3d;
+	color: #596c26;
+}
+.alerta{
+	background: #ffea97;
+	border: 1px solid #e2b500;
+	color: #995f5b;
+}
+.erro{
+	background: #efcec9;
+	border: 1px solid #ad3f30;
+	color: #943728;
+}
+.pergunta{
+	background: #c6d8f0;
+	border: 1px solid #4381cc;
+	color: #5c58b9;
+}
