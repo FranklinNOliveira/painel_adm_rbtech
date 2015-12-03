@@ -66,6 +66,32 @@ switch ($tela):
 		break;
 	case 'incluir':
 		echo '<h2>Cadastro de usuários</h2>';
+		//Validação dos dados
+		if(isset($_POST['cadastrar'])):
+			$user = new usuarios(array(
+				'nome'=>$_POST['nome'],
+				'email'=>$_POST['email'],
+				'login'=>$_POST['login'],
+				'senha'=>codificaSenha($_POST['senha']),
+				'administrador'=>($_POST['adm']=='on') ? 's' : 'n',
+			));
+
+			if($user->existeRegistro('login',$_POST['login'])):
+				echo 'Este login já está cadastrado, escolha outro nome de usuário.';
+				$duplicado = TRUE;
+			endif;
+			if($user->existeRegistro('email',$_POST['email'])):
+				echo 'Este email já está cadastrado, escolha outro endereço.';
+				$duplicado = TRUE;
+			endif;
+			if($duplicado!=TRUE):
+				$user->inserir($user);
+				if($user->linhasafetadas==1):
+					echo 'Dados inseridos com sucesso';
+					unset($_POST);
+				endif;
+			endif;
+		endif;
 		?>
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -85,22 +111,22 @@ switch ($tela):
 				<legend>Informe os dados para cadastro</legend>
 				<ul>
 					<li><label for="nome">Nome:</label>
-					<input type="text" size="50" name:"nome" value="<?php echo $_POST['nome'] ?>" ></li>
+					<input type="text" size="50" name="nome" value="<?php echo $_POST['nome'] ?>" ></li>
 
 					<li><label for="email">Email:</label>
-					<input type="text" size="50" name:"email" value="<?php echo $_POST['email'] ?>" ></li>
+					<input type="text" size="50" name="email" value="<?php echo $_POST['email'] ?>" ></li>
 
 					<li><label for="login">Login:</label>
-					<input type="text" size="35" name:"login" value="<?php echo $_POST['login'] ?>" ></li>
+					<input type="text" size="35" name="login" value="<?php echo $_POST['login'] ?>" ></li>
 
 					<li><label for="senha">Senha:</label>
-					<input type="password" size="25" name:"senha" id="senha" value="<?php echo $_POST['senha'] ?>" ></li>
+					<input type="password" size="25" name="senha" id="senha" value="<?php echo $_POST['senha'] ?>" ></li>
 
 					<li><label for="senhaconf">Repita a senha:</label>
-					<input type="password" size="25" name:"senhaconf" value="<?php echo $_POST['senhaconf'] ?>" ></li>
+					<input type="password" size="25" name="senhaconf" value="<?php echo $_POST['senhaconf'] ?>" ></li>
 
 					<li><label for="adm">Administrador:</label>
-					<input type="checkbox" name:"adm" /> dar controle total ao usuário</li>
+					<input type="checkbox" name="adm" /> dar controle total ao usuário</li>
 					<li class="center">
 						<input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar">
 						<input type="submit" name="cadastrar" value="Salvar dados">

@@ -48,6 +48,24 @@
 			redireciona('?erro=1');
 		}
 
+		public function existeRegistro($campo=NULL, $valor=null){
+			if ($campo!=null && $valor!=null):
+				is_numeric($valor) ? $valor = $valor : $valor = "'".$valor."'";
+				$this->extras_select = "WHERE $campo=$valor";
+				$this->selecionaTudo($this);
+				if($this->linhasafetadas > 0):
+					return TRUE;
+				else:
+					return FALSE;
+				endif;
+			else:
+				$this->trataerro(__FILE__,__FUNCTION__,NULL,'Faltam parâmetros para executar a função',TRUE);
+			endif;
+		}
+
+
+
+
 
 	} // fim classe usuários
 ?>
