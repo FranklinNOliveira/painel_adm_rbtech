@@ -77,17 +77,17 @@ switch ($tela):
 			));
 
 			if($user->existeRegistro('login',$_POST['login'])):
-				echo 'Este login já está cadastrado, escolha outro nome de usuário.';
+				printMsg('Este login já está cadastrado, escolha outro nome de usuário.','erro');
 				$duplicado = TRUE;
 			endif;
 			if($user->existeRegistro('email',$_POST['email'])):
-				echo 'Este email já está cadastrado, escolha outro endereço.';
+				printMsg('Este email já está cadastrado, escolha outro endereço.', 'erro');
 				$duplicado = TRUE;
 			endif;
 			if($duplicado!=TRUE):
 				$user->inserir($user);
 				if($user->linhasafetadas==1):
-					echo 'Dados inseridos com sucesso';
+					printMsg('Dados inseridos com sucesso. <a href="'.ADMURL.'?m=usuarios&t=listar">Exibir cadastros</a>') ;
 					unset($_POST);
 				endif;
 			endif;
@@ -126,7 +126,8 @@ switch ($tela):
 					<input type="password" size="25" name="senhaconf" value="<?php echo $_POST['senhaconf'] ?>" ></li>
 
 					<li><label for="adm">Administrador:</label>
-					<input type="checkbox" name="adm" /> dar controle total ao usuário</li>
+					<input type="checkbox" name="adm" <?php if(!isAdmin()) echo 'disabled="disabled"'; if($_POST['adm']) echo 
+'checked="checked"'; ?> /> dar controle total ao usuário</li>
 					<li class="center">
 						<input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar">
 						<input type="submit" name="cadastrar" value="Salvar dados">
@@ -138,6 +139,49 @@ switch ($tela):
 		break;
 		case 'listar':
 		echo '<h2>Usuários Cadastrados</h2>';
+		loadCSS('data-table', NULL, TRUE);
+		loadJS('jquery-datatable');
+
+		?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#listausers").dataTable({
+					"sScrollY" : "400px",
+					"bPaginate" : false,
+					"aaSorting": [[0, "asc"]]
+				});
+			});
+		</script>
+		<table cellspacing="0" cellspading="0" class="display" id="listausers">
+			<thead>
+				<tr>
+					<th>Nome</th><th>Email</th><th>Login</th><th>Ativo/Adm</th><th>Cadastro</th><th>Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+				$user = new usuarios();
+				$user->selecionaTudo($user);
+				while ($res = $user->retornaDados()){
+					echo '<tr>';
+					printf('<td>%s</td>',$res->nome);
+					printf('<td>%s</td>',$res->email);
+					printf('<td>%s</td>',$res->login);
+					printf('<td class="center">%s/%s</td>',strtoupper($res->ativo),strtoupper($res->administrador));
+					printf('<td class="center">%s</td>',date("d/m/y",strtotime($res->datacad)));
+					printf('<td>%s</td>','Ações');
+					echo '</tr>';
+				};
+
+
+				?>
+			</tbody>
+		</table>
+
+
+
+
+		<?php
 		break;
 	default:
 		echo '<p>A tela solicitada não existe!</p>';

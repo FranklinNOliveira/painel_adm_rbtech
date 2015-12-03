@@ -14,13 +14,11 @@
 
 		public function __construct(){
 			$this->conecta();
-			echo "Abre conecxao </br>";
 		} // Fim método construtor
 		
 		public function __destruct(){
 			if($this->conexao != NULL):
 				mysqli_close($this->conexao);
-				echo "</br>Conecxao fechada</br>";
 			endif;
 		} // Fim método desconexao
 		
