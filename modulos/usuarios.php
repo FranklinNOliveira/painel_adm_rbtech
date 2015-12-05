@@ -146,7 +146,14 @@ switch ($tela):
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#listausers").dataTable({
-					"sScrollY" : "400px",
+			        "language": {
+		            "zeroRecords": "Nenhum dado para exibição",
+		            "info": "Mostrando _START_ a _END_ de _TOTAL_ de registros",
+		            "infoEmpty": "Nenhum registro para ser exibido",
+		            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+		            "search": "Pesquisar",
+					},
+					"sScrollY" : "450px",
 					"bPaginate" : false,
 					"aaSorting": [[0, "asc"]]
 				});
@@ -169,11 +176,14 @@ switch ($tela):
 					printf('<td>%s</td>',$res->login);
 					printf('<td class="center">%s/%s</td>',strtoupper($res->ativo),strtoupper($res->administrador));
 					printf('<td class="center">%s</td>',date("d/m/y",strtotime($res->datacad)));
-					printf('<td>%s</td>','Ações');
+					printf('<td class="center">
+							<a href="?m=usuarios&t=incluir" title="Novo cadastro"><img src="images/add.png" alt="Novo cadastro" /></a>
+							<a href="?m=usuarios&t=editar&id=%s" title="Editar"><img src="images/edit.png" alt="Editar" /></a>
+							<a href="?m=usuarios&t=senha&id=%s" title="Alterar Senha"><img src="images/pass.png" alt="Alterar senha" /></a>
+							<a href="?m=usuarios&t=excluir&id=%s" title="Excluir cadastro"><img src="images/delete.png" alt="Excluir cadastro" /></a>
+						</td>',$res->id,$res->id,$res->id);
 					echo '</tr>';
 				};
-
-
 				?>
 			</tbody>
 		</table>
@@ -182,9 +192,106 @@ switch ($tela):
 
 
 		<?php
-		break;
+	break;
+	case 'editar':
+		echo '<h2>Edição de usuários</h2>';
+		$sessao = new sessao();
+		if (isAdmin()==TRUE || $sessao->getVar('iduser')==$_GET['id']):
+			// Permissão para alerar.
+			$id = $_GET['id'];
+			if (isset($_GET['id'])) :
+				//Faz a edição do user
+				if (isset($_POST['editar'])):
+					$user = new usuarios(array(
+						'nome' => $_POST['nome'],
+						'email' => $_POST['email'],
+						'ativo' => $_POST['ativo']=='on' ? 's' : 'n',
+						'administrador' => $_POST['adm']=='on' ? 's' : 'n',
+					));
+					$user->valorpk = $id;
+					$user->extras_select = "WHERE id=$id";
+					$user->selecionaTudo($user);
+					$res = $user->retornaDados();
+					if ($res->email != $_POST['email']) :
+						if ($user->existeRegistro('email',$_POST['email'])):
+							printMsg('Este email já existe no sistema, escolha outro endereço!','erro');
+							$duplicado = TRUE;
+						endif;
+					endif;
+					if ($duplicado != TRUE) :
+						$user->atualizar($user);
+						if ($user->linhasafetadas==1) :
+							printMsg('Dados alterados com sucesso. <a href="?m=usuarios&t=listar">Exibir cadastros</a>');
+						else:
+							printMsg('Nenhum dado foi alterado. <a href="?m=usuarios&t=listar">Exibir cadastros</a>');
+
+						endif;
+					endif;
+				endif;
+				$userbd = new usuarios();
+				$userbd->extras_select = "WHERE id=$id";
+				$userbd->selecionaTudo($userbd);
+				$resbd = $userbd->retornaDados();
+			else:
+				//Avisa para selecionar o user
+				printMsg('Usuário não definido, <a href="?m=usuarios&t=listar">escolha um usuário para alterar</a>','erro');
+			endif;
+			?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$(".userform").validate({
+					rules:{
+						nome:{required:true, minlength:3},
+						email:{required:true, email:true},
+					}
+				});
+			});
+		</script>
+		<form class="userform" method="post" action="">
+			<fieldset>
+				<legend>Informe os dados para alteração</legend>
+				<ul>
+					<li><label for="nome">Nome:</label>
+					<input type="text" size="50" name="nome" value="<?php if($resbd) echo $resbd->nome; ?>" ></li>
+
+					<li><label for="email">Email:</label>
+					<input type="text" size="50" name="email" value="<?php if($resbd) echo $resbd->email; ?>" ></li>
+
+					<li><label for="login">Login:</label>
+					<input type="text" disabled="disabled" size="35" name="login" value="<?php if($resbd) echo $resbd->login; ?>" ></li>
+
+					<li><label for="adm">Ativo:</label>
+					<input type="checkbox" name="ativo" <?php if(!isAdmin()) echo 'disabled="disabled"'; if($resbd->administrador == 's') echo 
+'checked="checked"'; ?> /> habilitar ou desabilitar o usuário</li>
+
+					<li><label for="adm">Administrador:</label>
+					<input type="checkbox" name="adm" <?php if(!isAdmin()) echo 'disabled="disabled"'; if($resbd->administrador == 's') echo 
+'checked="checked"'; ?> /> dar controle total ao usuário</li>
+					<li class="center">
+						<input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar">
+						<input type="submit" name="editar" value="Salvar alterações">
+					</li>
+				</ul>	
+			</fieldset>
+		</form>
+
+
+			<?php
+		else:
+			//Avisa que não tem permissão para alterar.
+			printMsg('Você não tem permissão para acessar esta página. <a href="#" onclick="history.back()">Voltar</a>','erro');
+		endif;
+	break;
+	case 'senha':
+		echo '<h2>Alterar senha</h2>';
+	
+	break;
+	case 'excluir':
+		echo '<h2>Exclusão de usuários</h2>';
+	
+	break;
 	default:
 		echo '<p>A tela solicitada não existe!</p>';
-		break;
+	break;
 endswitch;
 ?>

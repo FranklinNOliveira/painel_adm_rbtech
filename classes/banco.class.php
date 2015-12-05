@@ -78,7 +78,6 @@
 				endfor;
 				$sql .="WHERE ".$objeto->campopk."=";
 				$sql .= is_numeric($objeto->valorpk) ? $objeto->valorpk : "'".$objeto->valorpk."'";
-				echo $sql;
 			return $this->executaSQL($sql);		
 		} // Fim classe atualizar
 		
@@ -88,7 +87,6 @@
 				$sql = "DELETE FROM ".$objeto->tabela;
 				$sql .=" WHERE ".$objeto->campopk."=";
 				$sql .= is_numeric($objeto->valorpk) ? $objeto->valorpk : "'".$objeto->valorpk."'";
-				echo $sql;
 				return $this->executaSQL($sql);
 		} // fim classe deletar
 		
