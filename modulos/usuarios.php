@@ -283,12 +283,141 @@ switch ($tela):
 		endif;
 	break;
 	case 'senha':
-		echo '<h2>Alterar senha</h2>';
-	
+		echo '<h2>Alteração de senha</h2>';
+		$sessao = new sessao();
+		if (isAdmin()==TRUE || $sessao->getVar('iduser')==$_GET['id']):
+			// Permissão para alerar.
+			$id = $_GET['id'];
+			if (isset($_GET['id'])) :
+				//Faz a edição do user
+				if (isset($_POST['mudasenha'])):
+					$user = new usuarios(array(
+						'senha' => codificaSenha($_POST['senha']),
+					));
+					$user->valorpk = $id;
+					$user->atualizar($user);
+					if ($user->linhasafetadas==1) :
+						printMsg('Senha alterada com sucesso. <a href="?m=usuarios&t=listar">Exibir cadastros</a>');
+					else:
+						printMsg('Nenhum dado foi alterado. <a href="?m=usuarios&t=listar">Exibir cadastros</a>','alerta');
+					endif;
+				endif;
+				$userbd = new usuarios();
+				$userbd->extras_select = "WHERE id=$id";
+				$userbd->selecionaTudo($userbd);
+				$resbd = $userbd->retornaDados();
+			else:
+				//Avisa para selecionar o user
+				printMsg('Usuário não definido, <a href="?m=usuarios&t=listar">escolha um usuário para alterar</a>','erro');
+			endif;
+			?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$(".userform").validate({
+					rules:{
+						senha:{required:true, rangelength:[4,10]},
+						senhaconf:{required:true, equalTo:"#senha"},
+					}
+				});
+			});
+		</script>
+		<form class="userform" method="post" action="">
+			<fieldset>
+				<legend>Informe os dados para alteração</legend>
+				<ul>
+					<li><label for="nome">Nome:</label>
+					<input type="text" disabled="disabled" size="50" name="nome" value="<?php if($resbd) echo $resbd->nome; ?>" ></li>
+
+					<li><label for="email">Email:</label>
+					<input type="text" disabled="disabled" size="50" name="email" value="<?php if($resbd) echo $resbd->email; ?>" ></li>
+
+					<li><label for="login">Login:</label>
+					<input type="text" disabled="disabled" size="35" name="login" value="<?php if($resbd) echo $resbd->login; ?>" ></li>
+
+					<li><label for="senha">Senha:</label>
+					<input type="password" size="25" name="senha" id="senha" value="<?php echo $_POST['senha'] ?>" ></li>
+
+					<li><label for="senhaconf">Repita a senha:</label>
+					<input type="password" size="25" name="senhaconf" value="<?php echo $_POST['senhaconf'] ?>" ></li>
+					
+					<li class="center">
+						<input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar">
+						<input type="submit" name="mudasenha" value="Salvar alterações">
+					</li>
+				</ul>	
+			</fieldset>
+		</form>
+
+
+			<?php
+		else:
+			//Avisa que não tem permissão para alterar.
+			printMsg('Você não tem permissão para acessar esta página. <a href="#" onclick="history.back()">Voltar</a>','erro');
+		endif;
+	break;
 	break;
 	case 'excluir':
 		echo '<h2>Exclusão de usuários</h2>';
-	
+		$sessao = new sessao();
+		if (isAdmin()==TRUE):
+			if (isset($_GET['id'])) :
+				$id = $_GET['id'];
+				//Faz a exclusão do user
+				if (isset($_POST['excluir'])):
+					$user = new usuarios();
+					$user->valorpk = $id;
+					$user->deletar($user);
+					if ($user->linhasafetadas==1) :
+						printMsg('Registro excluido com sucesso. <a href="?m=usuarios&t=listar">Exibir cadastros</a>');
+					else:
+						printMsg('Nenhum registro foi excluido. <a href="?m=usuarios&t=listar">Exibir cadastros</a>');
+
+					endif;
+				endif;
+				$userbd = new usuarios();
+				$userbd->extras_select = "WHERE id=$id";
+				$userbd->selecionaTudo($userbd);
+				$resbd = $userbd->retornaDados();
+			else:
+				//Avisa para selecionar o user
+				printMsg('Usuário não definido, <a href="?m=usuarios&t=listar">escolha um usuário para excluir</a>','erro');
+			endif;
+			?>
+		<form class="userform" method="post" action="">
+			<fieldset>
+				<legend>Confira os dados para exclusão</legend>
+				<ul>
+					<li><label for="nome">Nome:</label>
+					<input type="text" disabled="disabled" size="50" name="nome" value="<?php if($resbd) echo $resbd->nome; ?>" ></li>
+
+					<li><label for="email">Email:</label>
+					<input type="text" disabled="disabled" size="50" name="email" value="<?php if($resbd) echo $resbd->email; ?>" ></li>
+
+					<li><label for="login">Login:</label>
+					<input type="text" disabled="disabled" size="35" name="login" value="<?php if($resbd) echo $resbd->login; ?>" ></li>
+
+					<li><label for="adm">Ativo:</label>
+					<input type="checkbox" disabled="disabled" name="ativo" <?php if($resbd->administrador == 's') echo 
+'checked="checked"'; ?> /> habilitar ou desabilitar o usuário</li>
+
+					<li><label for="adm">Administrador:</label>
+					<input type="checkbox" disabled="disabled" name="adm" <?php if($resbd->administrador == 's') echo 
+'checked="checked"'; ?> /> dar controle total ao usuário</li>
+					<li class="center">
+						<input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar">
+						<input type="submit" name="excluir" value="Confirmar exclusão">
+					</li>
+				</ul>	
+			</fieldset>
+		</form>
+
+
+			<?php
+		else:
+			//Avisa que não tem permissão para alterar.
+			printMsg('Você não tem permissão para acessar esta página. <a href="#" onclick="history.back()">Voltar</a>','erro');
+		endif;
+	break;
 	break;
 	default:
 		echo '<p>A tela solicitada não existe!</p>';

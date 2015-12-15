@@ -10,6 +10,11 @@ protegeArquivo(basename(__FILE__));
 				<li><a href="?m=usuarios&t=listar">Exibir</a></li>
 			</ul>
 		</li>
+		<?php 
+		$sessao = new sessao();
+		$meuid = $sessao->getVar('iduser');
+		?>
+		<li><a href="?m=usuarios&t=senha&id=<?php echo $meuid ?>">Mudar senha</a></li>
 		<li><a href="?logoff=true">Sair</a></li>
 	</ul>
 </div><!-- Sidebar -->
