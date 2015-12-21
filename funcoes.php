@@ -109,12 +109,17 @@ function isAdmin(){
 	else:
 		return FALSE;
 	endif;
-
-
 }
 
-
-
+function antiInject($string){
+	// remove palavras que contenham sintaxe sql
+	$string = preg_replace("/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/i","",$string);
+	$string = trim($string);//limpa espacos vazios
+	$string = strip_tags($string);//tira tags html e php
+	if(!get_magic_quotes_gpc())
+		$string = addslashes($string);//Adiciona barras invertidas a uma string
+	return $string;
+}
 
 
 
